@@ -16,23 +16,24 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = sqliteTableCreator((name) => `rate-my-code_${name}`);
 
-export const posts = createTable(
-  "post",
+export const snippets = createTable(
+  "snippet",
   {
     id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: text("name", { length: 256 }),
-    createdById: text("createdById", { length: 255 })
+    userId: text("userId")
       .notNull()
       .references(() => users.id),
+    title: text("title", { length: 100 }).notNull(),
+    code: text("code").notNull(),
+    language: text("language", { length: 50 }),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: int("updatedAt", { mode: "timestamp" }),
   },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (snippet) => ({
+    userIdIdx: index("snippet_userId_idx").on(snippet.userId),
+  }),
 );
 
 export const users = createTable("user", {
@@ -47,6 +48,7 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  snippets: many(snippets),
 }));
 
 export const accounts = createTable(
@@ -73,7 +75,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -91,7 +93,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -107,5 +109,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
