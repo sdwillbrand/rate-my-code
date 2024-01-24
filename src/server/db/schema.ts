@@ -25,7 +25,7 @@ export const snippets = createTable(
       .references(() => users.id),
     title: text("title", { length: 100 }).notNull(),
     code: text("code").notNull(),
-    language: text("language", { length: 50 }),
+    language: text("language", { length: 50 }).notNull(),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
