@@ -4,6 +4,7 @@ import "@/styles/prism-okaidia.min.css";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import Header from "@/components/Header.server";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,7 +24,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body
+        className={`bg-gradient-to-b from-[#2e026d] to-[#15162c] font-sans text-white ${inter.variable}`}
+      >
+        <Header />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
