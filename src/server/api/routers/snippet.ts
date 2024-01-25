@@ -39,4 +39,10 @@ export const snippetRouter = createTRPCRouter({
       orderBy: (snippet, { desc }) => [desc(snippet.createdAt)],
     });
   }),
+  getLatests: publicProcedure.query(({ ctx }) => {
+    return ctx.db.query.snippets.findMany({
+      orderBy: (snippet, { desc }) => [desc(snippet.createdAt)],
+      limit: 10,
+    });
+  }),
 });
