@@ -1,5 +1,4 @@
 import "@/styles/globals.css";
-import "@/styles/prism-okaidia.min.css";
 
 import { Inter } from "next/font/google";
 

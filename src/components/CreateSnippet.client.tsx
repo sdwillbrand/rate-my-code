@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { PROGRAMMING_LANGUAGES } from "@/utils/ProgrammingLanguages";
 import { type PostSnippet } from "@/utils/typings";
 import Prism from "prismjs";
-import "@/styles/prism-okaidia.min.css";
-import { useState } from "react";
+import "prismjs/components";
+import "prismjs/themes/prism-okaidia.min.css";
+import Editor from "react-simple-code-editor";
 
 interface Props {
   userId: string;
@@ -24,15 +26,11 @@ const CreateSnippet = ({ userId }: Props) => {
     },
   });
 
-  const [formattedCode, setFormattedCode] = useState("");
-
   const language = useWatch({ control, name: "language" });
 
   const onSubmit = (data: PostSnippet) => {
     createPost.mutate(data);
   };
-
-  const codeMethods = register("code");
 
   return (
     <div className="flex flex-col gap-2">
@@ -52,25 +50,37 @@ const CreateSnippet = ({ userId }: Props) => {
           </option>
         ))}
       </select>
-      <pre className={`language-${language}`}>
-        <code className={`language-${language}`}>
-          <div
-            className="w-full bg-transparent px-4 py-2 outline-none"
-            contentEditable="true"
-            {...codeMethods}
-            onInput={(e) =>
-              setFormattedCode(
+      <Controller
+        control={control}
+        name="code"
+        render={({ field }) => (
+          <Editor
+            value={field.value}
+            onValueChange={(code) => field.onChange(code)}
+            textareaClassName="bg-black"
+            highlight={(code) => {
+              console.log(
                 Prism.highlight(
-                  e.currentTarget.textContent ?? "",
-                  Prism.languages[language] ?? Prism.languages.javascript!,
+                  code,
+                  Prism.languages[language] ?? Prism.languages.js!,
                   language,
                 ),
-              )
-            }
-            dangerouslySetInnerHTML={{ __html: formattedCode }}
+                language,
+              );
+              return Prism.highlight(
+                code,
+                Prism.languages[language] ?? Prism.languages.js!,
+                language,
+              );
+            }}
+            padding={10}
+            style={{
+              fontFamily: '"Fira code", "Fira Mono", monospace',
+              fontSize: 14,
+            }}
           />
-        </code>
-      </pre>
+        )}
+      />
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"
         disabled={createPost.isLoading}
