@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   index,
   int,
+  integer,
   primaryKey,
   sqliteTableCreator,
   text,
@@ -26,8 +27,8 @@ export const snippets = createTable(
     title: text("title", { length: 100 }).notNull(),
     code: text("code").notNull(),
     language: text("language", { length: 50 }).notNull(),
-    createdAt: int("created_at", { mode: "timestamp" })
-      .default(sql`CURRENT_TIMESTAMP`)
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$default(() => new Date())
       .notNull(),
     updatedAt: int("updatedAt", { mode: "timestamp" }),
   },
