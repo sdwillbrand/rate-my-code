@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`bg-gradient-to-b from-[#2e026d] to-[#15162c] font-sans text-white ${inter.variable}`}
+        className={`bg-gradient-to-b from-[#1b026d] to-[#0f1136] font-sans text-white ${inter.variable}`}
       >
         <Header />
         <TRPCReactProvider>{children}</TRPCReactProvider>
