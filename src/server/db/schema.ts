@@ -6,6 +6,7 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
+  unique,
 } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -16,26 +17,6 @@ import { type AdapterAccount } from "next-auth/adapters";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = sqliteTableCreator((name) => `rate-my-code_${name}`);
-
-export const snippets = createTable(
-  "snippet",
-  {
-    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id),
-    title: text("title", { length: 100 }).notNull(),
-    code: text("code").notNull(),
-    language: text("language", { length: 50 }).notNull(),
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .$default(() => new Date())
-      .notNull(),
-    updatedAt: int("updatedAt", { mode: "timestamp" }),
-  },
-  (snippet) => ({
-    userIdIdx: index("snippet_userId_idx").on(snippet.userId),
-  }),
-);
 
 export const users = createTable("user", {
   id: text("id", { length: 255 }).notNull().primaryKey(),
@@ -50,6 +31,7 @@ export const users = createTable("user", {
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   snippets: many(snippets),
+  reactions: many(reactions),
 }));
 
 export const accounts = createTable(
@@ -110,5 +92,54 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+);
+
+export const snippets = createTable(
+  "snippet",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id),
+    title: text("title", { length: 100 }).notNull(),
+    code: text("code").notNull(),
+    language: text("language", { length: 50 }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$default(() => new Date())
+      .notNull(),
+    updatedAt: int("updatedAt", { mode: "timestamp" }),
+  },
+  (snippet) => ({
+    userIdIdx: index("snippet_userId_idx").on(snippet.userId),
+  }),
+);
+
+export const snippetsRelation = relations(snippets, ({ one }) => ({
+  users: one(users, { fields: [snippets.userId], references: [users.id] }),
+}));
+
+export const reactions = createTable(
+  "reaction",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id),
+    snippetId: int("snippetId")
+      .notNull()
+      .references(() => snippets.id),
+    reactionType: text("reaction_type", {
+      enum: ["like", "dislike"],
+    }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$default(() => new Date())
+      .notNull(),
+    updatedAt: int("updatedAt", { mode: "timestamp" }),
+  },
+  (reaction) => ({
+    userIdIdx: index("reaction_userId_idx").on(reaction.userId),
+    snippetIdIdx: index("reaction_snippetId_idx").on(reaction.snippetId),
+    snippetUser: unique("snippet_user").on(reaction.userId, reaction.snippetId),
   }),
 );

@@ -58,15 +58,8 @@ const CreateSnippet = ({ userId }: Props) => {
             value={field.value}
             onValueChange={(code) => field.onChange(code)}
             textareaClassName="bg-black"
+            className="bg-black"
             highlight={(code) => {
-              console.log(
-                Prism.highlight(
-                  code,
-                  Prism.languages[language] ?? Prism.languages.js!,
-                  language,
-                ),
-                language,
-              );
               return Prism.highlight(
                 code,
                 Prism.languages[language] ?? Prism.languages.js!,

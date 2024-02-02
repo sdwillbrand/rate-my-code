@@ -8,14 +8,6 @@ import {
 import { snippets } from "@/server/db/schema";
 
 export const snippetRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
   create: protectedProcedure
     .input(
       z.object({
@@ -37,11 +29,27 @@ export const snippetRouter = createTRPCRouter({
   getLatest: publicProcedure.query(({ ctx }) => {
     return ctx.db.query.snippets.findFirst({
       orderBy: (snippet, { desc }) => [desc(snippet.createdAt)],
+      with: {
+        users: true,
+      },
+      columns: {
+        updatedAt: false,
+      },
     });
   }),
   getLatests: publicProcedure.query(({ ctx }) => {
     return ctx.db.query.snippets.findMany({
       orderBy: (snippet, { desc }) => [desc(snippet.createdAt)],
+      with: {
+        users: {
+          columns: {
+            name: true,
+          },
+        },
+      },
+      columns: {
+        updatedAt: false,
+      },
       limit: 10,
     });
   }),
