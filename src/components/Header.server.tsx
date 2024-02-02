@@ -1,22 +1,32 @@
 import { getServerAuthSession } from "@/server/auth";
 import Link from "next/link";
+import PersonIcon from "@mui/icons-material/Person";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LoginIcon from "@mui/icons-material/Login";
+import HomeIcon from "@mui/icons-material/Home";
 
 const Header = async () => {
   const session = await getServerAuthSession();
 
   return (
-    <div className="flex w-full items-center justify-end gap-4 p-3">
-      <Link href="/">Home</Link>
-      <p className="text-center text-xl text-white">
-        {session && <span>Logged in as {session.user?.name}</span>}
-      </p>
-      <Link
-        href={session ? "/api/auth/signout" : "/api/auth/signin"}
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-      >
-        {session ? "Sign out" : "Sign in"}
-      </Link>
-      {session && <Link href="/user">Create a snippet</Link>}
+    <div className="flex w-full items-center justify-between gap-4 p-3">
+      <div>
+        <Link href="/">
+          <HomeIcon />
+        </Link>
+      </div>
+      <div className="flex gap-2">
+        {session && <PersonIcon />}
+        {session && (
+          <Link href="/user">
+            <AddCircleIcon />
+          </Link>
+        )}
+        <Link href={session ? "/api/auth/signout" : "/api/auth/signin"}>
+          {session ? <LogoutIcon /> : <LoginIcon />}
+        </Link>
+      </div>
     </div>
   );
 };

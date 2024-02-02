@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 "use client";
-
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { Controller, useForm, useWatch } from "react-hook-form";

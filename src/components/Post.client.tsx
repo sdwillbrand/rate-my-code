@@ -3,6 +3,8 @@ import type { PostSnippet } from "@/utils/typings";
 import classNames from "classnames";
 import Prism from "prismjs";
 import Editor from "react-simple-code-editor";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 interface Props {
   snippet: PostSnippet;
@@ -10,10 +12,16 @@ interface Props {
 
 const Post = ({ snippet }: Props) => {
   if (!snippet.id) return;
-  const reaction = api.reaction.getReaction.useQuery({
-    snippetId: snippet.id,
-    userId: snippet.userId,
-  });
+  const reaction = api.reaction.getReaction.useQuery(
+    {
+      snippetId: snippet.id,
+      userId: snippet.userId,
+    },
+    {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  );
 
   const createReaction = api.reaction.createReation.useMutation({
     onSuccess: () => {
@@ -57,21 +65,21 @@ const Post = ({ snippet }: Props) => {
       <div className="mt-2 flex gap-2 p-3">
         <button
           onClick={() => handleClick("like")}
-          className={classNames("h-8 w-8 rounded-lg border", {
-            "bg-green-500": reaction.data === "like",
-          })}
+          className={classNames("h-8 w-8 rounded-lg border")}
           disabled={reaction.data === "like"}
         >
-          +
+          <ThumbUpIcon
+            color={reaction.data === "like" ? "success" : "inherit"}
+          />
         </button>
         <button
           onClick={() => handleClick("dislike")}
-          className={classNames("h-8 w-8 rounded-lg border", {
-            "bg-orange-500": reaction.data === "dislike",
-          })}
+          className={classNames("h-8 w-8 rounded-lg border")}
           disabled={reaction.data === "dislike"}
         >
-          -
+          <ThumbDownIcon
+            color={reaction.data === "dislike" ? "error" : "inherit"}
+          />
         </button>
       </div>
     </div>
