@@ -33,7 +33,7 @@ export const reactionRouter = createTRPCRouter({
           userId: input.userId,
         })
         .onConflictDoUpdate({
-          target: [reactions.snippetId, reactions.userId],
+          target: reactions.snippetId,
           set: { reactionType: input.reaction },
         });
     }),
