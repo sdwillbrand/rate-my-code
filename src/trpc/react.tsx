@@ -22,6 +22,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             refetchOnReconnect: false,
             refetchIntervalInBackground: false,
             refetchOnMount: false,
+            staleTime: 2 * 60 * 1000,
           },
         },
       }),

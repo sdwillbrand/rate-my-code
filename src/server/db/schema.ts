@@ -6,7 +6,7 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
-  unique,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -142,7 +142,10 @@ export const reactions = createTable(
   (reaction) => ({
     userIdIdx: index("reaction_userId_idx").on(reaction.userId),
     snippetIdIdx: index("reaction_snippetId_idx").on(reaction.snippetId),
-    snippetUser: unique("snippet_user").on(reaction.userId, reaction.snippetId),
+    snippetUser: uniqueIndex("snippet_user").on(
+      reaction.userId,
+      reaction.snippetId,
+    ),
   }),
 );
 
