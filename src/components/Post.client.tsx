@@ -15,7 +15,6 @@ const Post = ({ snippet }: Props) => {
   const reaction = api.reaction.getReaction.useQuery(
     {
       snippetId: snippet.id,
-      userId: snippet.userId,
     },
     {
       refetchOnWindowFocus: false,
@@ -33,7 +32,6 @@ const Post = ({ snippet }: Props) => {
     if (!snippet.id) return;
     createReaction.mutate({
       snippetId: snippet.id,
-      userId: snippet.userId,
       reaction: reaction,
     });
   };

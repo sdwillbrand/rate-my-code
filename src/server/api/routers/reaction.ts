@@ -5,13 +5,13 @@ import { reactions } from "@/server/db/schema";
 
 export const reactionRouter = createTRPCRouter({
   getReaction: protectedProcedure
-    .input(z.object({ snippetId: z.number(), userId: z.string() }))
+    .input(z.object({ snippetId: z.number() }))
     .query(async ({ input, ctx }) => {
       const reaction = await ctx.db.query.reactions.findFirst({
         where: (reaction, { eq, and }) =>
           and(
             eq(reaction.snippetId, input.snippetId),
-            eq(reaction.userId, input.userId),
+            eq(reaction.userId, ctx.session.user.id),
           ),
       });
       return reaction?.reactionType ?? null;
@@ -21,7 +21,6 @@ export const reactionRouter = createTRPCRouter({
       z.object({
         reaction: z.enum(["like", "dislike"]),
         snippetId: z.number(),
-        userId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -30,10 +29,10 @@ export const reactionRouter = createTRPCRouter({
         .values({
           reactionType: input.reaction,
           snippetId: input.snippetId,
-          userId: input.userId,
+          userId: ctx.session.user.id,
         })
         .onConflictDoUpdate({
-          target: reactions.snippetId,
+          target: [reactions.userId, reactions.snippetId],
           set: { reactionType: input.reaction },
         });
     }),
