@@ -7,6 +7,7 @@ export default {
   driver: "turso",
   dbCredentials: {
     url: env.DATABASE_URL,
+    authToken: env.TURSO_DB_AUTH_TOKEN,
   },
   tablesFilter: ["rate-my-code_*"],
 } satisfies Config;
