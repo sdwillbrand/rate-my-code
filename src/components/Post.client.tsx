@@ -42,7 +42,7 @@ const Post = ({ snippet }: Props) => {
     <div className="flex flex-col rounded-lg border">
       <h1 className="p-3 text-xl">{snippet.title}</h1>
       <Editor
-        className="bg-black"
+        className="bg-black text-white"
         onValueChange={() => {
           return;
         }}

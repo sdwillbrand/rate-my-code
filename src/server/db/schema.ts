@@ -115,8 +115,9 @@ export const snippets = createTable(
   }),
 );
 
-export const snippetsRelation = relations(snippets, ({ one }) => ({
+export const snippetsRelation = relations(snippets, ({ one, many }) => ({
   users: one(users, { fields: [snippets.userId], references: [users.id] }),
+  reactions: many(reactions),
 }));
 
 export const reactions = createTable(
@@ -143,3 +144,11 @@ export const reactions = createTable(
     snippetUser: unique("snippet_user").on(reaction.userId, reaction.snippetId),
   }),
 );
+
+export const reactionsRelations = relations(reactions, ({ one }) => ({
+  snippets: one(snippets, {
+    fields: [reactions.snippetId],
+    references: [snippets.id],
+  }),
+  users: one(users, { fields: [reactions.userId], references: [users.id] }),
+}));

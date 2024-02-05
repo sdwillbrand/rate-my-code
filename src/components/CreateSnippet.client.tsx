@@ -56,7 +56,7 @@ const CreateSnippet = ({ userId }: Props) => {
             value={field.value}
             onValueChange={(code) => field.onChange(code)}
             textareaClassName="bg-black"
-            className="bg-black"
+            className="bg-black text-white"
             highlight={(code) => {
               return Prism.highlight(
                 code,
