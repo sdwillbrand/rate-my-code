@@ -47,6 +47,7 @@ export const accounts = createTable(
     providerAccountId: text("providerAccountId", { length: 255 }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
+    refresh_token_expires_in: int("refresh_token_expires_in"),
     expires_at: int("expires_at"),
     token_type: text("token_type", { length: 255 }),
     scope: text("scope", { length: 255 }),
